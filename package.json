@@ -65,11 +65,23 @@
       "auth": {
         "kind": "basic-auth",
         "users": {
-          "jefe": { 
-            "password": "12345", 
-            "roles": [ "admin"]
+          "jefe": {
+            "password": "12345",
+            "roles": [
+              "admin"
+            ]
           },
           "*": false
+        }
+      },
+      "ZFISD_R080_PBA_FLT_VALUES_SRV": {
+        "kind": "odata-v2",
+        "model": "srv/external/ZFISD_R080_PBA_FLT_VALUES_SRV",
+        "[production]": {
+          "credentials": {
+            "destination": "RSR370",
+            "path": "/sap/opu/odata/sap/ZFISD_R080_PBA_FLT_VALUES_SRV"
+          }
         }
       }
     }
