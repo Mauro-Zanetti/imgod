@@ -1,0 +1,56 @@
+---
+_schema-version: '3.1'
+ID: onthertest
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production
+
+modules:
+  - name: onthertest-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: onthertest-auth
+      - name: onthertest-dest
+      - name: onthertest-connectivity
+
+resources:
+  - name: onthertest-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: onthertest-${org}-${space}
+        tenant-mode: dedicated
+        
+  # ------------------------------------------------------------
+  - name: Destiation-Instance
+  # ------------------------------------------------------------
+  - name: onthertest-dest
+    parameters:
+      service-plan: lite
+      service: destination
+      service-name: onthertest-dest
+    type: org.cloudfoundry.managed-service
+
+  - name: onthertest-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
